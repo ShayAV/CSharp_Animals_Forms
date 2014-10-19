@@ -1,0 +1,389 @@
+using System;
+using System.Collections;    // enable hash table
+using System.Collections.Generic;   // enable the list 
+using System.ComponentModel;
+using System.Data;
+using System.Drawing;  // enable image
+using System.Linq;
+using System.Text;
+using System.Windows.Forms;
+using System.Reflection;   // enable using dll
+
+
+namespace Animals
+{
+    public partial class Form1 : Form 
+    {
+        AddAnimalForm Frm2;
+        PassworForm passwordFrm;
+        public Form1()
+        {
+            InitializeComponent();
+
+            Frm2 = new AddAnimalForm(this);
+            passwordFrm = new PassworForm(this);
+                     
+            Bug ParatMosheRabenu = new Bug("ParatMosheRabenu");                                                
+            ParatMosheRabenu.age = 4;
+            ParatMosheRabenu.weight = 0.37;
+            Bug Mosquito = new Bug("Mosquito");
+            Mosquito.age = 1;
+            Mosquito.weight = 0.17;
+
+            //Bug mos = new Bug(Mosquito);   // using copy constructor
+            //MessageBox.Show("mos: " + mos.Name + " , " + mos.age);
+           
+            
+            Fish AngelFish = new Fish("AngelFish");
+            AngelFish.age = 2.6;
+            AngelFish.weight = 0.75;
+            Fish BlueFish = new Fish("BlueFish");
+            BlueFish.age = 2.9;
+            BlueFish.weight = 5.34;
+            
+            
+            Dinosaur Deinocheirus = new Dinosaur("Deinocheirus");
+            Deinocheirus.age = 45;
+            Deinocheirus.weight = 673.5;
+            Dinosaur Claosaurus = new Dinosaur("Claosaurus");
+            Claosaurus.age = 32.8;
+            Claosaurus.weight = 830;
+           
+                       
+                ListofAnimals.Add(ParatMosheRabenu);
+                ListofAnimals.Add(Mosquito);
+                ListofAnimals.Add(AngelFish);
+                ListofAnimals.Add(BlueFish);
+                ListofAnimals.Add(Deinocheirus);
+                ListofAnimals.Add(Claosaurus);
+
+
+            updateButton.Enabled = false;
+            ageComboBox.Enabled = false;
+            weightComboBox.Enabled = false;
+            ageComboBox.Items.AddRange(new object[] { 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1, 1.1, 1.2, 1.3, 1.4, 1.5, 1.6, 1.7, 1.8, 1.9, 2, 2.1, 2.3, 2.4, 2.5, 2.6, 2.7, 2.8, 2.9, 3 });
+            weightComboBox.Items.AddRange(new object[] { 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1, 1.1, 1.2, 1.3, 1.4, 1.5, 1.6, 1.7, 1.8, 1.9, 2, 2.1, 2.3, 2.4, 2.5, 2.6, 2.7, 2.8, 2.9, 3 });
+
+
+            DetailsHashTable.Add("ParatMosheRabenu", @"Coccinellids are small insects, ranging from 1 mm to 10 mm (0.04 to 0.4 inches),
+                 and are commonly yellow, orange, or scarlet with small black spots on their wing covers, with black legs, head and antennae");
+            DetailsHashTable.Add("Mosquito", @"The mosquitoes are a family of small, midge-like flies: the Culicidae. Although a few species are harmless or even useful to humanity, 
+                 most are a nuisance because they suck blood from vertebrates, many of them attacking humans");
+            DetailsHashTable.Add("AngelFish", "Marine angelfish are perciform fish of the family Pomacanthidae. They are found on shallow reefs in the tropical Atlantic, Indian, and mostly western Pacific oceans");
+            DetailsHashTable.Add("BlueFish", @"The bluefish (Pomatomus saltatrix), called tailor in Australia,[1] is a species of popular marine 
+                 gamefish found in all climates. It is the only extant species of the Pomatomidae family.");
+            DetailsHashTable.Add("Deinocheirus", @"Deinocheirus is a genus of large theropod dinosaur, possibly an ornithomimosaurian, which lived in what is now southern Mongolia,
+                 during the late Cretaceous Period (Nemegt Formation, dating to around 70 million years ago).");
+            DetailsHashTable.Add("Claosaurus", "Claosaurus is a genus of primitive hadrosaurid (duck-billed dinosaur) that lived during the Late Cretaceous Period (Santonian).");
+
+
+            EbuttonClickedEvent += new EbuttonClickedDelegate(WhatToDo);   // define the method that will be executed when the event invoked
+
+            
+
+            maskedTextBox1.MaskInputRejected += new MaskInputRejectedEventHandler(maskedTextBox1_MaskInputRejected);
+            maskedTextBox1.KeyDown += new KeyEventHandler(maskedTextBox1_KeyDown);
+
+
+           // passwordButton.Enabled = false;
+            
+           
+        }
+
+      
+
+
+       
+
+
+
+        /// <summary>
+        /// This method define tha messages that the user will see in the toolTips when he try to
+        /// enter wrong input to maskedTextBox1
+        /// </summary>
+        private void maskedTextBox1_MaskInputRejected(object sender, MaskInputRejectedEventArgs e)
+        {
+            if (maskedTextBox1.MaskFull)
+            {
+                toolTip1.ToolTipTitle = "Input Rejected - Too Much Data";
+                toolTip1.Show("You cannot enter any more data into the date field. Delete some characters in order to insert more data.", maskedTextBox1, 60, -20, 5000);
+            }
+            else if (e.Position == maskedTextBox1.Mask.Length)
+            {
+                toolTip1.ToolTipTitle = "Input Rejected - End of Field";
+                toolTip1.Show("You cannot add extra characters to the end of this date field.", maskedTextBox1, 60, -20, 5000);
+            }
+            else
+            {
+                toolTip1.ToolTipTitle = "Input Rejected";
+                toolTip1.Show("You can only add numeric characters (0-9) into this date field.", maskedTextBox1, 60, -20, 5000);
+            }
+           
+
+        }
+
+        void maskedTextBox1_KeyDown(object sender, KeyEventArgs e)
+        {
+            // The balloon tip is visible for five seconds; if the user types any data before it disappears, collapse it ourselves.
+            toolTip1.Hide(maskedTextBox1);
+        }
+
+
+
+        private void MaskButtonHover(object sender, EventArgs e)
+        {
+            toolTip1.ToolTipTitle = "Do not press";
+            toolTip1.Show("Do not press this button", dangerButton, 60, -20, 5000);
+        }
+
+
+
+      
+        Hashtable DetailsHashTable = new Hashtable();
+        List<Animal> ListofAnimals = new List<Animal>();
+        
+       
+       
+
+        
+
+        protected override void Dispose(bool disposing)
+        {
+            if (disposing)
+            {
+                if (components != null)
+                {
+                    components.Dispose();
+                }
+            }
+            base.Dispose(disposing);
+        }
+
+           
+                   
+        
+
+        /// <summary>
+        /// display the chosen animals in the animals listbox
+        /// </summary>
+        private void DisplayAnimals_Click(object sender, EventArgs e)
+        {
+            
+           
+                AnimalsListBox.Items.Clear();
+                if (ListofAnimals[0].Name != null)
+                   // MessageBox.Show("no name");
+                  //  MessageBox.Show(ListofAnimals[0].Name.ToString());
+
+                    if (DisplayBugsCheckBox.Checked)
+                        foreach (Animal item in ListofAnimals)
+                            if (item is Bug)
+                                AnimalsListBox.Items.Add(item.Name);   // display the bugs list
+
+                if (DisplayFishCheckBox.Checked)
+                {
+                    if (DisplayBugsCheckBox.Checked)  // the fish will be displayed after the bugs
+                        AnimalsListBox.Items.Add("");
+
+                    foreach (Animal item in ListofAnimals)
+                        if (item is Fish)
+                            AnimalsListBox.Items.Add(item.Name);  // display the fish list
+                }
+
+
+                if (DisplayDinosaursCheckBox.Checked)
+                {
+                    if (DisplayBugsCheckBox.Checked || DisplayFishCheckBox.Checked)  // the dinosaours will be displayed after the bugs or the fish
+                        AnimalsListBox.Items.Add("");
+
+                    foreach (Animal item in ListofAnimals)
+                        if (item is Dinosaur)
+                            AnimalsListBox.Items.Add(item.Name);   // display the dinosaurs list
+                }
+
+                if (AnimalsListBox.Items.Count == 0)
+                    MessageBox.Show("please choose animals to display");
+        }
+
+         
+        /// <summary>
+        /// display the details of the chosen animal in the listbox
+        /// </summary>
+         private void ShowDetailsButton_Click(object sender, EventArgs e)
+         {
+             updateButton.Enabled = true;
+             ageComboBox.Enabled = true;
+             weightComboBox.Enabled = true;
+             nameRichTextBox.Clear();    //  clears the text box
+             ageRichTextBox.Clear();
+             weightRichTextBox.Clear();
+
+                        
+            // try
+            // {                
+                 // get the text that the user is clicked in the animals list, find the matching string in the hash table
+                 // and display it in the details richtextbox
+                 detailsRichTextBox1.Text = DetailsHashTable[AnimalsListBox.SelectedItem.ToString().ToString()].ToString();
+
+                 foreach (Animal item in ListofAnimals)
+                     if (AnimalsListBox.SelectedItem.ToString() == item.Name)   //  the selected animal is found in the list
+                     {
+                         nameRichTextBox.Text = item.Name;    //  present the name
+
+                         if (item.age != 0)
+                         ageRichTextBox.Text = item.age.ToString();  //  present the age
+
+                        // if (item.weight != null)
+                         weightRichTextBox.Text = item.weight.ToString();   // present the weight
+                     }
+                     
+//}
+             //catch
+             //{
+             //    MessageBox.Show("please choose an animal to show her details");
+             //}
+            
+         }
+
+
+
+        /// <summary>
+         ///  using event, the definition of the method that will be executed is in InitializeComponent().
+         ///  I use event to print a short message every time the Ebutton is clicked
+        /// </summary>
+        public delegate void EbuttonClickedDelegate(object sender, EventArgs e);    // define the delegate that the event will use
+
+        public event EbuttonClickedDelegate EbuttonClickedEvent;   // define the event
+
+        private void Ebutton_Click(object sender, EventArgs e)    
+        {
+            if (EbuttonClickedEvent != null)
+                EbuttonClickedEvent(sender, e);   // subscribe the Ebutton_Click method to the event
+        }
+
+
+
+        public void WhatToDo(object sender, EventArgs e)   //  the implementation of the method that will be executed when the event is invoked
+        {
+            MessageBox.Show("Ebutton was clicked, the sender is " + sender);
+        }
+
+        /////////////////////////////////////////////////////////////////////
+
+
+       
+
+
+        
+
+
+        /// <summary>
+        /// update the age and the weight
+        /// </summary>
+        private void updateButton_Click(object sender, EventArgs e)
+        {
+               //if (ageComboBox.Text == String.Empty)
+
+
+            foreach (Animal item in ListofAnimals)            
+                if (AnimalsListBox.SelectedItem.ToString() == item.Name)
+                {
+                    if (ageComboBox.Text != String.Empty)                  
+                        item.age = Convert.ToDouble(ageComboBox.Text);
+                    
+
+                    if (weightComboBox.Text != String.Empty)
+                        item.weight = Convert.ToDouble(weightComboBox.Text);
+                }
+            
+
+
+            ShowDetailsButton_Click(sender, e);
+            MessageBox.Show("Data Updated");
+
+
+        }
+
+       
+
+        private void dangerButton_Click_1(object sender, EventArgs e)
+        {
+           Environment.Exit(0);
+        }
+
+
+      
+        
+        /// <summary>
+        /// Opens the AddAnimalForm and add the animal to the list of animals
+        /// </summary>
+        private void AddAnimalButton_Click(object sender, EventArgs e)
+        {
+            int exist = 0;   // indicates weather the animal already exist in the hash table
+                   
+            if (Frm2.ShowDialog() == DialogResult.OK)   // present the AddAnimalForm and check if the "ok" button was pressed
+            {
+             
+                if (Frm2.addBugRadioButton.Checked)
+                {                  
+                    ListofAnimals.Add( new Bug(Frm2.addNameTextBox.Text) );    // add bug to the list
+                }
+                else if (Frm2.addFishRadioButton.Checked)
+                {
+                    ListofAnimals.Add(new Fish(Frm2.addNameTextBox.Text));
+                }
+                else if (Frm2.addDinosaursRadioButton.Checked)
+                {
+                    ListofAnimals.Add(new Dinosaur(Frm2.addNameTextBox.Text));
+                }
+                else
+                {
+                    MessageBox.Show("please choose an animal");
+                    AddAnimalButton_Click(sender, e);
+                    exist = 1;
+                }
+
+                if (Frm2.addDetailsRichTextBox.Text != String.Empty)
+                    DetailsHashTable.Add(Frm2.addNameTextBox.Text, Frm2.addDetailsRichTextBox.Text);  // add the animal name and details to the hash table
+                else if (Frm2.addDetailsRichTextBox.Text != String.Empty  && exist == 0)
+                    DetailsHashTable.Add(Frm2.addNameTextBox.Text, String.Empty);  // in case no details provided - add only the name
+                                                               
+            }           
+        }
+
+        
+        /// <summary>
+        /// prompts the user to enter password
+        /// </summary>
+        private void passwordButton_Click(object sender, EventArgs e)
+        {
+            passwordFrm.passwordTextBox.PasswordChar = '*';    // the char that the user will see when he enters the password
+            passwordFrm.passwordTextBox.Clear();
+           
+          //  passwordFrm.okButton.Focus();
+
+            do    // do until the correct password is enterd or the cancel button is pressed
+            {
+                if (passwordFrm.ShowDialog() == DialogResult.OK)
+                {
+                    if (passwordFrm.passwordTextBox.Text == "asterisk")
+                    {
+                        MessageBox.Show("good");
+                        break;
+                    }
+                    else
+                    {
+                        MessageBox.Show("not good");
+                        passwordFrm.passwordTextBox.Clear();
+                    }
+                }
+                if (passwordFrm.DialogResult == DialogResult.Cancel)
+                    break;
+
+
+            } while (passwordFrm.passwordTextBox.Text != "asterisk");
+            
+        }
+
+    }
+}
