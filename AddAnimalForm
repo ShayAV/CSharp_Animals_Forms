@@ -1,0 +1,22 @@
+using System;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Data;
+using System.Drawing;
+using System.Linq;
+using System.Text;
+using System.Windows.Forms;
+
+namespace Animals
+{
+    public partial class AddAnimalForm : Form
+    {
+        Form1 Frm1;
+        public AddAnimalForm(Form1 F)
+        {
+            InitializeComponent();
+            Frm1 = F;
+        }
+        
+    }
+}
